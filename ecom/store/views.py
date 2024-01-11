@@ -1,22 +1,40 @@
-from django.shortcuts import redirect, render
-from .models import Product, Category
+from django.shortcuts import redirect, render, get_object_or_404
+from .models import Movie, Category
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from django import forms
+from .models import Movie, Actor
+from .forms import MovieForm, ActorForm
+from django.contrib.auth.decorators import login_required
 from .forms import SignUpForm
+from django.urls import reverse
 
 
-# Create your views here.
+@login_required
+def like_product(request, pk):
+    product = Movie.objects.get(id=pk)
+
+    if request.user in product.likes.all():
+        product.likes.remove(request.user)
+        like = product.likes
+    else:
+        product.likes.add(request.user)
+        like = product.likes
+        return render(request, "product.html", {"product": product, "like": like})
+    return render(request, "product.html", {"product": product, "like": like})
+
+
 def product(request, pk):
-    product = Product.objects.get(id=pk)
-    return render(request, "product.html", {"product": product})
+    product = Movie.objects.get(id=pk)
+    like = product.likes
+    return render(request, "product.html", {"product": product, "like": like})
 
 
 def category_summary(request):
     categories = Category.objects.all()
-    return render(request, "category_summary.html", {"categories": categories})
+    return redirect(request, "category_summary.html", {"categories": categories})
 
 
 def category(request, foo):
@@ -26,7 +44,7 @@ def category(request, foo):
     try:
         # Look Up The Category
         category = Category.objects.get(name=foo)
-        products = Product.objects.filter(category=category)
+        products = Movie.objects.filter(category=category)
         return render(
             request, "category.html", {"products": products, "category": category}
         )
@@ -36,8 +54,24 @@ def category(request, foo):
 
 
 def home(request):
-    products = Product.objects.all()
-    return render(request, "home.html", {"products": products})
+    if User.is_anonymous:
+        products = Movie.objects.all()
+        return render(
+            request,
+            "home.html",
+            {
+                "products": products,
+            },
+        )
+    else:
+        profile = request.user.profile
+        products = Movie.objects.all()
+
+        return render(
+            request,
+            "home.html",
+            {"products": products, "profile": profile},
+        )
 
 
 def about(request):
@@ -84,3 +118,90 @@ def register_user(request):
 
     else:
         return render(request, "register.html", {"form": form})
+
+
+@login_required
+def add_movie(request):
+    if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES)
+        if form.is_valid():
+            movie = form.save()
+            return redirect("home")
+
+    else:
+        form = MovieForm()
+
+    return render(request, "add_movie.html", {"form": form})
+
+
+@login_required
+def update_movie(request, pk):
+    movie = get_object_or_404(Movie, id=pk)
+    if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES, instance=movie)
+        if form.is_valid():
+            movie = form.save()
+            like = movie.likes
+            return render(request, "product.html", {"product": movie, "like": like})
+    else:
+        form = MovieForm(instance=movie)
+
+    return render(request, "update_movie.html", {"form": form, "movie": movie})
+
+
+@login_required
+def delete_movie(request, pk):
+    movie = get_object_or_404(Movie, id=pk)
+
+    if request.method == "POST":
+        movie.delete()
+        return redirect("home")
+
+    return render(request, "delete_movie.html", {"movie": movie})
+
+
+@login_required
+def add_actor(request):
+    if request.method == "POST":
+        form = ActorForm(request.POST, request.FILES)
+        if form.is_valid():
+            actor = form.save()
+            actors = Actor.objects.all()
+            return render(request, "all_actors.html", {"actors": actors})
+    else:
+        form = ActorForm()
+
+    return render(request, "add_actor.html", {"form": form})
+
+
+@login_required
+def update_actor(request, pk):
+    actor = get_object_or_404(Actor, pk=pk)
+
+    if request.method == "POST":
+        form = ActorForm(request.POST, instance=actor)
+        if form.is_valid():
+            actor = form.save()
+            actors = Actor.objects.all()
+            return render(request, "all_actors.html", {"actors": actors})
+    else:
+        form = ActorForm(instance=actor)
+
+    return render(request, "update_actor.html", {"form": form, "actor": actor})
+
+
+@login_required
+def delete_actor(request, pk):
+    actor = get_object_or_404(Actor, pk=pk)
+
+    if request.method == "POST":
+        actor.delete()
+        actors = Actor.objects.all()
+        return render(request, "all_actors.html", {"actors": actors})
+
+    return render(request, "delete_actor.html", {"actor": actor})
+
+
+def all_actors(request):
+    actors = Actor.objects.all()
+    return render(request, "all_actors.html", {"actors": actors})

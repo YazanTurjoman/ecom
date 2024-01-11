@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<section class="py-5">
+    <div class="container">
+        <h1 class="text-center mb-5">Actor List</h1>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for actor in actors %}
+                <div class="col">
+                    <div class="card h-100 actor-card">
+                        {% if actor.image %}
+                            <img class="card-img-top actor-image" src="{{ actor.image.url }}" alt="{{ actor.name }}">
+                        {% endif %}
+                        <div class="card-body actor-details">
+                            <h2 class="card-title">{{ actor.name }}</h2>
+                            <p class="card-text"><strong>Birthdate:</strong> {{ actor.birthdate }}</p>
+                            {% if actor.bio %}
+                                <p class="card-text"><strong>Bio:</strong> {{ actor.bio }}</p>
+                            {% endif %}
+                        </div>
+                        {% if request.user.is_staff %}
+                      
+                        <div class="card-footer">
+                            <div class="row justify-content-between">
+                                
+                                    <a href="{% url 'update_actor' actor.id %}" class="btn btn-primary btn-block">Update</a>
+                              
+                              
+                                    <a href="{% url 'delete_actor' actor.id %}" class="btn btn-danger btn-block">Delete</a>
+                                
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .actor-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        transition: transform 0.3s;
+    }
+
+    .actor-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .actor-image {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        max-height: 200px;
+        object-fit: cover;
+    }
+
+    .actor-details {
+        padding: 20px;
+    }
+
+    .card-footer {
+        background-color: #f8f9fa;
+        border-top: 1px solid #e2e8f0;
+        padding: 10px 20px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    h2 {
+        color: #007bff;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    p {
+        color: #495057;
+    }
+</style>
+
+{% endblock %}

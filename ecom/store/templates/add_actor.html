@@ -1,0 +1,45 @@
+<!-- movies/templates/movies/add_actor.html -->
+
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="mb-4">Add Actor</h2>
+        <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+          <div class="mb-3">
+            {{ form.name.label_tag }}
+            {{ form.name }}
+            <div class="invalid-feedback">
+              {{ form.name.errors.as_text }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.birthdate.label_tag }}
+            {{ form.birthdate }}
+            <div class="invalid-feedback">
+              {{ form.birthdate.errors.as_text }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.bio.label_tag }}
+            {{ form.bio }}
+            <div class="invalid-feedback">
+              {{ form.bio.errors.as_text }}
+            </div>
+          </div>
+          <div class="mb-3">
+            {{ form.image.label_tag }}
+            {{ form.image }}
+            <div class="invalid-feedback">
+              {{ form.image.errors.as_text }}
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Actor</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,47 +1,100 @@
-<!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <div class="container px-4 px-lg-5">
-      <a class="navbar-brand" href="{% url 'home' %}">Django Ecommerce</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-              <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+  <div class="container-fluid">
+      <!-- Brand Logo -->
+      <a class="navbar-brand" href="{% url 'home' %}">Django</a>
 
-  {% if user.is_authenticated %}
-     <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-  {% else %}
-     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+      <!-- Navbar Toggler Button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+      </button>
 
-     <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+      <!-- Navbar Links -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <ul class="navbar-nav">
+              <!-- Home Link -->
+              <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+              </li>
 
-  {% endif %}
-
+              <!-- About Link -->
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'about' %}">About</a>
+              </li>
+              <!-- Add Moive -->
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'add_movie' %}">ADD Movie</a>
+            </li>
+             <!-- Add Moive -->
+             <li class="nav-item">
+                <a class="nav-link" href="{% url 'all_actors' %}">All Actors</a>
+            </li>
+            <!-- Add Moive -->
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'add_actor' %}">ADD Actor</a>
+            </li>
               
-
-
-
+              <!-- Categories Dropdown -->
               <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+                  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Categories
+                  </a>
                   <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <!-- All Products Link -->
                       <li><a class="dropdown-item" href="{% url 'category_summary' %}">All Products</a></li>
+
+                      <!-- Divider -->
                       <li><hr class="dropdown-divider" /></li>
-<li><a class="dropdown-item" href="{% url 'category' 'movie' %}">Movies</a></li>
+
+                      <!-- Movie Link -->
+                      <li><a class="dropdown-item" href="{% url 'category' 'movie' %}">Movies</a></li>
+
+                      <!-- Marketing Books Link -->
                       <li><a class="dropdown-item" href="{% url 'category' 'Marketing-Books' %}">Marketing Books</a></li>
                   </ul>
               </li>
+
+              <!-- Inbox icon -->
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'inbox' %}">
+                      <i class="fas fa-inbox"></i> Inbox
+                  </a>
+              </li>
+              {% endif %}
+
+              <!-- User Authentication Section -->
+              <li class="nav-item dropdown">
+                  {% if user.is_authenticated %}
+                  <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <img src="{{user.profile.avatar}}" class="rounded-circle" height="40" width="40" alt="Avatar" loading="lazy" />
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                      <!-- My Profile Link -->
+                      <li>
+                          <a class="dropdown-item" href="{% url 'profile' user.id %}">My profile</a>
+                      </li>
+
+                      <!-- Settings Link -->
+                      <li>
+                          <a class="dropdown-item" href="{% url 'profile_edit' user.username%}">Settings</a>
+                      </li>
+
+                      <!-- Logout Link -->
+                      <li>
+                          <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                      </li>
+                  </ul>
+                  {% else %}
+                  <!-- Login Link -->
+                  <li class="nav-item">
+                  <a class="nav-link" href="{% url 'login' %}">Login</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'register' %}">Register</a>
+                  {% endif %}
+                </li>
+              </li>
           </ul>
-          <form class="d-flex">
-
-<a href="{% url 'cart_summary' %}" class="btn btn-outline-dark"><i class="bi-cart-fill me-1"></i>
-                  Cart
-<span class="badge bg-dark text-white ms-1 rounded-pill" id="cart_quantity">{{ cart|length }}
-
-</span></a>
-
-
-              
-          </form>
       </div>
   </div>
 </nav>

@@ -1,4 +1,4 @@
-from store.models import Product
+from store.models import Movie
 
 
 class Cart:
@@ -31,7 +31,7 @@ class Cart:
         # Get product IDS
         product_ids = self.cart.keys()
         # lookup those keys in our products database model
-        products = Product.objects.filter(id__in=product_ids)
+        products = Movie.objects.filter(id__in=product_ids)
         # Get quantities
         quantities = self.cart
         # Start counting at 0
@@ -56,7 +56,7 @@ class Cart:
         # Get ids from cart
         product_ids = self.cart.keys()
         # Use ids to lookup products in database model
-        products = Product.objects.filter(id__in=product_ids)
+        products = Movie.objects.filter(id__in=product_ids)
 
         # Return those looked up products
         return products

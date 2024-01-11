@@ -22,6 +22,7 @@
     
     {{ form.as_p }}
     <br/><br/>
+    <input type="hidden" name="{{redirect_field_name}}" action="{% url 'profile_onboarding'%}">
     <button type="submit" class="btn btn-secondary">
       Register
     </button>

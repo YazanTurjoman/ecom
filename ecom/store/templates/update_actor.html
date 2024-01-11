@@ -1,0 +1,11 @@
+<!-- movies/templates/movies/update_actor.html -->
+
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Update Actor: {{ actor.name }}</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Actor</button>
+  </form>
+{% endblock %}

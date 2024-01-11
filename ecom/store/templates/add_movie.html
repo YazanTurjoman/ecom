@@ -1,0 +1,11 @@
+<!-- movies/templates/movies/add_movie.html -->
+
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Add Movie</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Movie</button>
+  </form>
+{% endblock %}

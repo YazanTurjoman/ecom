@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Conversation with {{ other_profile.name }}</h2>
+    <div class="messages mt-3" id="message-container">
+        {% for message in messages %}
+            <div class="{% if message.sender == other_profile %}received{% else %}sent{% endif %} chat-bubble">
+                <p>{{ message.content }}</p>
+                <p class="timestamp">{{ message.timestamp }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <form method="post" action="{% url 'send_message' profile_id=other_profile.id %}" class="mt-3" id="message-form">
+        {% csrf_token %}
+        <div class="input-group mb-2">
+            <textarea name="content" class="form-control chat-input" placeholder="Type your message..." required></textarea>
+            <button type="submit" class="btn btn-primary chat-send">&#10148;</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Scroll to the bottom when the page loads
+    window.onload = function () {
+        var messageContainer = document.getElementById('message-container');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    };
+
+    // Automatically scroll to the bottom when a new message is added
+    document.getElementById('message-form').addEventListener('submit', function () {
+        setTimeout(function () {
+            var messageContainer = document.getElementById('message-container');
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }, 0);
+    });
+</script>
+
+<style>
+    .container {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    h2 {
+        font-size: 20px;
+        color: #fff;
+        background-color: #128C7E;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .messages {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .chat-bubble {
+        border-radius: 10px;
+        padding: 10px;
+        max-width: 70%;
+        word-wrap: break-word;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sent {
+        align-self: flex-end;
+        background-color: #DCF8C6;
+        color: #000;
+    }
+
+    .received {
+        align-self: flex-start;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .timestamp {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    .chat-input {
+        border-radius: 10px;
+        border: none;
+        resize: none;
+        padding: 10px;
+        box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-send {
+        background-color: #128C7E;
+        border: none;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        color: #fff;
+    }
+</style>
+
+{% endblock %}

@@ -1,105 +1,97 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<style>
+    /* Add any additional styles here if needed */
+    .card {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
+    .card-img {
+        border-radius: 10px 0 0 10px;
+    }
 
-<div class="container">
-<br/>
+    .card-body {
+        padding: 20px;
+    }
 
+    .like-button {
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
 
-<div class="card mb-3">
-  <div class="row g-0">
-    <div class="col-md-4">
-      <img src="{{ product.image.url }}" class="img-fluid rounded-start" alt="...">
-    </div>
-    <div class="col-md-8">
-      <div class="card-body">
-        <center>
-        <h5 class="card-title">{{ product.name }}</h5>
-        <br/>
-        <p class="card-text justified">{{ product.description }}</p>
-        
-        {% if product.is_sale %}
-        <div class="d-flex justify-content-center small text-warning mb-2">
-                <div class="bi-star-fill"></div>
-                &nbsp;&nbsp;Sale!&nbsp;&nbsp;
-                <div class="bi-star-fill"></div>
-                </div>
+    .like-button.liked {
+        background-color: #e74c3c;
+    }
 
-                <!-- Product price-->
-                <strike>
-                ${{ product.price }}
-                </strike>
-                &nbsp;
-                ${{ product.sale_price }}
+    .likes-count {
+        margin-left: 10px;
+        font-weight: bold;
+        color: #555;
+    }
+</style>
 
+<div class="card">
+    <div class="row g-0">
+        <div class="col-md-4">
+            <img src="{{ product.image.url }}" class="img-fluid card-img" alt="...">
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description }}</p>
 
+                {% if product.is_sale %}
+                    <div class="text-warning mb-2">
+                        <i class="bi bi-star-fill"></i>
+                        &nbsp;&nbsp;Sale!&nbsp;&nbsp;
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <strike>${{ product.price }}</strike>
+                    &nbsp;${{ product.sale_price }}
+                {% else %}
+                    ${{ product.price }}
+                {% endif %}
+                <br/><br/>
 
-        {% else %}
-            ${{ product.price }}
-            
-        {% endif %}
-            <br/><br/>
-<div class="row justify-content-center">
-    <div class="col-md-2">Quantity:</div>
-                <div class="col-md-2">
-                <select class="form-select form-select-sm" id="qty-cart">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+                <div class="d-flex justify-content-center align-items-center">
+                    {% for user in product.liked %}
+                        <a href="{% url 'profile' user.id %}" class="mr-2">
+                            <img src="{{ user.profile.avatar }}" class="rounded-circle" height="40" width="40" />
+                        </a>
+                    {% endfor %}
+                    
+                    
+                   <a href="{% url 'update_movie' product.id %}">update_movie</a>
+                    <form method="post" action="{% url 'delete_movie' product.id %}" class="ml-auto">
+                        {% csrf_token %}
+                       
+                            <button class="like-button liked" type="submit">
+                                <i class="fas fa-thumbs-down pr-2"></i> Delete Movie
+                            </button>
+                    </form>
+                    <form method="post" action="{% url 'like_product' product.id %}" class="ml-auto">
+                        {% csrf_token %}
+                        {% if user in product.liked %}
+                            <button class="like-button liked" type="submit">
+                                <i class="fas fa-thumbs-down pr-2"></i> Dislike
+                            </button>
+                        {% else %}
+                            <button class="like-button" type="submit">
+                                <i class="fas fa-thumbs-up pr-2"></i> Like
+                            </button>
+                        {% endif %}
+                        <span class="likes-count">{{ product.total_likes }}</span>
+                    </form>
                 </div>
             </div>
-            <br/><br/>
-        <a href="{% url 'home'%}" class="btn btn-secondary">Home</a>
-        <button type="button" value="{{ product.id }}" class="btn btn-secondary" id="add-cart">Add To Cart</button>
-
-    </center>
-      </div>
+        </div>
     </div>
-  </div>
 </div>
-</div>
-        	
-
-<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-
-<script>
-// Check if button pressed
-$(document).on('click', '#add-cart', function(e){
-    e.preventDefault();
-    $.ajax({
-        type: 'POST',
-        url: '{% url "cart_add" %}',
-        data: {
-    product_id: $('#add-cart').val(),
-    product_qty: $('#qty-cart option:selected').text(),
-    csrfmiddlewaretoken: '{{ csrf_token }}',
-    action: 'post'
-        },
-
-        success: function(json){
-            //console.log(json)
-            document.getElementById("cart_quantity").textContent = json.qty
-        },
-
-        error: function(xhr, errmsg, err){
-
-        }
-
-
-    });
-
-
-
-})
-
-
-
-
-</script>
-
 
 {% endblock %}

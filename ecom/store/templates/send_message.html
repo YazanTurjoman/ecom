@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card border rounded shadow p-4">
+        <h1 class="mb-4">New Message</h1>
+
+        <!-- Search User Form -->
+        <form method="post" action="{% url 'send_message' user.username %}">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="receiver_username" class="form-label visually-hidden">Search User:</label>
+            <div class="input-group">
+              <input type="text" id="receiver_username" name="receiver_username" class="form-control" placeholder="Search for a user" required>
+              <button type="submit" class="btn btn-success">Search</button>
+            </div>
+          </div>
+        </form>
+
+        {% if user.username %}
+          <!-- Send Message Form -->
+          <form method="post" action="{% url 'send_message' user.username %}" class="mt-4">
+            {% csrf_token %}
+            <h2 class="mb-3">Chat with {{ user.username }}</h2>
+
+            <div class="mb-3">
+              <textarea id="content" name="content" rows="4" class="form-control" placeholder="Type your message" required></textarea>
+            </div>
+
+            <div class="text-end">
+              <button type="submit" class="btn btn-success">Send</button>
+            </div>
+          </form>
+
+          <!-- Back to Inbox Link -->
+          <a href="{% url 'inbox' %}" class="btn btn-light mt-3">Back to Inbox</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

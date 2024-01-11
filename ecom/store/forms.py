@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
+from .models import Movie, Actor
 
 
 class SignUpForm(UserCreationForm):
@@ -59,3 +60,35 @@ class SignUpForm(UserCreationForm):
         self.fields[
             "password2"
         ].help_text = '<span class="form-text text-muted"><small>Enter the same password as before, for verification.</small></span>'
+
+
+class MovieForm(forms.ModelForm):
+    class Meta:
+        model = Movie
+        fields = [
+            "name",
+            "price",
+            "category",
+            "description",
+            "image",
+            "is_sale",
+            "sale_price",
+        ]
+
+
+class ActorForm(forms.ModelForm):
+    class Meta:
+        model = Actor
+        fields = ["name", "birthdate", "bio", "image"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={"class": "form-control", "placeholder": "Enter name"}
+            ),
+            "birthdate": forms.DateInput(
+                attrs={"class": "form-control", "type": "date"}
+            ),
+            "bio": forms.Textarea(
+                attrs={"class": "form-control", "rows": 4, "placeholder": "Enter bio"}
+            ),
+            "image": forms.ClearableFileInput(attrs={"class": "form-control"}),
+        }
